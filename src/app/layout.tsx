@@ -9,7 +9,10 @@ import { ContactModal } from '@/components/contact/ContactModal';
 // Runs before first paint: lock scroll synchronously so there is no flash or
 // scroll jump before React hydrates the loader. The loader removes the class
 // once it hands off to the page (and <noscript> below covers JS-disabled).
-const NO_FLASH_SCRIPT = `try{document.documentElement.classList.add('loader-active')}catch(e){}`;
+// The intro cinematic is HOME-ONLY, so only lock when the current path is the
+// site root — basePath-aware (e.g. "/khanstruct-v2" on GitHub Pages).
+const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || '';
+const NO_FLASH_SCRIPT = `try{var p=location.pathname.replace(/\\/+$/,'');var b='${BASE_PATH}'.replace(/\\/+$/,'');if(p===b){document.documentElement.classList.add('loader-active')}}catch(e){}`;
 
 const spaceGrotesk = Space_Grotesk({
   subsets: ['latin'],

@@ -76,6 +76,7 @@ export function Header() {
             className={styles.logo}
             aria-label="Khanstruct home"
             onClick={onLogoClick}
+            data-site-logo
           >
             <Image
               src="/khanstruct-logo.png"
