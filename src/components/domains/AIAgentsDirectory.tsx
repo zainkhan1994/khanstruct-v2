@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import styles from './AIAgentsDirectory.module.css';
 
 interface Tool {
@@ -155,16 +154,11 @@ export function AIAgentsDirectory() {
   const goPrev = () => setActiveTab((p) => (p - 1 + CATEGORIES.length) % CATEGORIES.length);
 
   return (
-    <div className={styles.root}>
-      {/* Page Header */}
-      <div className={styles.pageHeader}>
-        <div>
-          <Link href="/domains" className={styles.backLink}>
-            ← Domains
-          </Link>
-          <h1 className={styles.title}>AI AGENTS</h1>
-        </div>
-        <span className={styles.dirBadge}>Directory</span>
+    <div id="directory" className={styles.root}>
+      {/* Section heading */}
+      <div className={styles.sectionHead}>
+        <h2 className={styles.sectionTitle}>The Directory</h2>
+        <span className={styles.dirBadge}>7 categories</span>
       </div>
 
       {/* Tab Bar */}
