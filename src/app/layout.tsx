@@ -50,6 +50,10 @@ export const metadata: Metadata = {
       'Khanstruct helps organizations design better experiences, manage data intelligently, and implement AI that drives real impact.',
   },
   robots: { index: true, follow: true },
+  icons: {
+    icon: { url: '/favicon.svg', type: 'image/svg+xml' },
+    other: [{ rel: 'mask-icon', url: '/favicon.svg', color: '#d7ff3f' }],
+  },
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -60,8 +64,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       suppressHydrationWarning
     >
       <head>
-        <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-        <link rel="mask-icon" href="/favicon.svg" color="#d7ff3f" />
         <script dangerouslySetInnerHTML={{ __html: NO_FLASH_SCRIPT }} />
         <noscript>
           {/* Without JS the loader can't tear itself down — hide it and unlock. */}
