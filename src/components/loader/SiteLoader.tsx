@@ -20,8 +20,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useExperience } from '@/store/experience';
 import styles from './SiteLoader.module.css';
 
-const MAX_LOCK_MS = 11000; // safety net: the page can never stay locked past this
-const MIN_INTRO_MS = 5000; // minimum cinematic screen time (kept in sync with CSS)
+const MAX_LOCK_MS = 12000; // safety net: the page can never stay locked past this
+const MIN_INTRO_MS = 6500; // minimum cinematic screen time (kept in sync with CSS)
 const REDUCED_MS = 600; // reduced-motion: short static hold
 
 type LoaderMode = 'full' | 'reduced';
@@ -203,27 +203,55 @@ export function SiteLoader() {
       <div className={styles.backdrop} aria-hidden="true" />
       <div className={styles.grain} aria-hidden="true" />
 
-      {/* Crosshair frame */}
+      {/* Box → network → brain → simplify — a white-on-black vector morph */}
       <div className={styles.scene} aria-hidden="true">
-        <span className={styles.crosshairH} />
-        <span className={styles.crosshairV} />
+        <svg className={styles.diagram} viewBox="0 0 400 400" fill="none">
+          {/* Stage 1–2 — the box appears, then unfolds outward */}
+          <path className={styles.box} pathLength={1} d="M150 150 H250 V250 H150 Z" />
 
-        {/* Phase 1 — the three disciplines */}
-        <span className={`${styles.word} ${styles.wDesign}`}>DESIGN</span>
-        <span className={`${styles.word} ${styles.wData}`}>DATA</span>
-        <span className={`${styles.word} ${styles.wAi}`}>AI</span>
+          {/* Stage 3–4 — organic branches + nodes grow from the core */}
+          <g className={styles.network}>
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.20s' }} d="M200 200 Q188 168 200 126" />
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.28s' }} d="M200 200 Q150 168 134 150" />
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.36s' }} d="M200 200 Q250 168 266 150" />
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.44s' }} d="M200 200 Q142 196 126 200" />
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.52s' }} d="M200 200 Q258 196 274 200" />
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.60s' }} d="M200 200 Q162 240 156 258" />
+            <path className={styles.netLine} pathLength={1} style={{ ['--d' as string]: '1.68s' }} d="M200 200 Q238 240 244 258" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '1.70s' }} cx="200" cy="126" r="3.4" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '1.78s' }} cx="134" cy="150" r="3.4" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '1.86s' }} cx="266" cy="150" r="3.4" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '1.94s' }} cx="126" cy="200" r="3.4" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '2.02s' }} cx="274" cy="200" r="3.4" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '2.10s' }} cx="156" cy="258" r="3.4" />
+            <circle className={styles.netNode} style={{ ['--d' as string]: '2.18s' }} cx="244" cy="258" r="3.4" />
+            <circle className={styles.netNodeCore} style={{ ['--d' as string]: '1.60s' }} cx="200" cy="200" r="4" />
+          </g>
 
-        {/* Phase 2 — connecting lines converge on the core */}
-        <svg
-          className={styles.connect}
-          viewBox="0 0 1000 600"
-          preserveAspectRatio="none"
-        >
-          <line className={styles.connLine} x1="150" y1="300" x2="490" y2="280" stroke="#b44dff" strokeWidth="1" opacity="0.6" />
-          <line className={styles.connLine} x1="150" y1="300" x2="490" y2="300" stroke="#b44dff" strokeWidth="1" opacity="0.35" />
-          <line className={styles.connLine} x1="500" y1="300" x2="500" y2="285" stroke="#4d9fff" strokeWidth="1" opacity="0.6" />
-          <line className={styles.connLine} x1="850" y1="300" x2="510" y2="280" stroke="#ffffff" strokeWidth="1" opacity="0.4" />
-          <line className={styles.connLine} x1="850" y1="300" x2="510" y2="320" stroke="#ffffff" strokeWidth="1" opacity="0.4" />
+          {/* Stage 5–7 — the network resolves into a brain with inner activity */}
+          <g className={styles.brain}>
+            <path className={styles.brainOutline} pathLength={1} style={{ ['--d' as string]: '2.30s' }} d="M200 120 C160 112 132 132 132 160 C112 166 110 196 130 206 C124 236 150 266 200 262 C250 266 276 236 270 206 C290 196 288 166 268 160 C268 132 240 112 200 120 Z" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '2.80s' }} d="M200 124 C192 150 208 168 200 194 C192 218 208 242 200 260" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '2.90s' }} d="M150 150 C166 156 168 172 152 180" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '3.00s' }} d="M134 196 C152 200 154 216 136 222" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '3.10s' }} d="M158 232 C170 236 172 250 156 254" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '2.90s' }} d="M250 150 C234 156 232 172 248 180" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '3.00s' }} d="M266 196 C248 200 246 216 264 222" />
+            <path className={styles.brainFold} pathLength={1} style={{ ['--d' as string]: '3.10s' }} d="M242 232 C230 236 228 250 244 254" />
+            <path className={styles.activity} pathLength={1} style={{ ['--d' as string]: '3.50s' }} d="M168 200 C186 182 214 218 232 200" />
+            <path className={styles.activity} pathLength={1} style={{ ['--d' as string]: '3.65s' }} d="M184 224 C196 212 204 232 216 224" />
+          </g>
+
+          {/* Stage 8 — short rays radiate outward (growth / interconnection) */}
+          <g className={styles.radiate}>
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '3.90s' }} x1="200" y1="120" x2="200" y2="96" />
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '3.98s' }} x1="132" y1="150" x2="112" y2="130" />
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '4.06s' }} x1="268" y1="150" x2="288" y2="130" />
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '4.14s' }} x1="120" y1="200" x2="96" y2="200" />
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '4.22s' }} x1="280" y1="200" x2="304" y2="200" />
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '4.30s' }} x1="155" y1="258" x2="138" y2="280" />
+            <line className={styles.ray} pathLength={1} style={{ ['--d' as string]: '4.38s' }} x1="245" y1="258" x2="262" y2="280" />
+          </g>
         </svg>
       </div>
 

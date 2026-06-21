@@ -62,89 +62,95 @@
   z-index: 2;
 }
 
-.crosshairH,
-.crosshairV {
-  position: absolute;
-  background: rgba(255, 255, 255, 0.05);
-  opacity: 0;
-  animation: ld-fade-in calc(0.7s * var(--sp)) ease forwards;
-  animation-delay: 0.2s;
+/* The diagram fills the scene; all stages share one viewBox-centered space so
+   box, network, brain and K all resolve at the exact center of the screen. */
+.diagram {
+  width: clamp(220px, 58vw, 360px);
+  height: auto;
+  aspect-ratio: 1;
+  overflow: visible;
 }
-.crosshairH {
-  left: 0;
-  right: 0;
-  top: 50%;
-  height: 1px;
+
+/* Shared vector stroke language — thin, white, rounded (monochrome). */
+.box,
+.netLine,
+.brainOutline,
+.brainFold,
+.ray {
+  fill: none;
+  stroke: var(--ld-white);
+  stroke-width: 1.6;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  vector-effect: non-scaling-stroke;
+}
+
+/* ── Stage 1–2 — the box draws, then unfolds outward and dissolves ──────── */
+.box {
+  transform-box: view-box;
+  transform-origin: 200px 200px;
+  animation:
+    ld-draw calc(0.6s * var(--sp)) cubic-bezier(0.6, 0, 0.3, 1) 0.2s forwards,
+    ld-box-out calc(0.7s * var(--sp)) cubic-bezier(0.6, 0, 0.3, 1) 0.95s forwards;
+}
+
+/* ── Stage 3–4 — branches grow from the core, nodes pop on, then retire ──── */
+.netLine {
+  animation:
+    ld-draw calc(0.5s * var(--sp)) ease var(--d, 1.2s) forwards,
+    ld-fade-out calc(0.5s * var(--sp)) ease 2.7s forwards;
+}
+.netNode,
+.netNodeCore {
+  fill: var(--ld-white);
+  opacity: 0;
+  transform-box: fill-box;
   transform-origin: center;
+  animation:
+    ld-node-pop calc(0.4s * var(--sp)) cubic-bezier(0.2, 1.2, 0.3, 1) var(--d, 1.7s) forwards,
+    ld-fade-out calc(0.5s * var(--sp)) ease 2.7s forwards;
 }
-.crosshairV {
-  top: 0;
-  bottom: 0;
-  left: 50%;
-  width: 1px;
+.netNodeCore {
+  fill: var(--ld-accent);
+  filter: drop-shadow(0 0 5px rgba(215, 255, 63, 0.5));
 }
 
-/* ── Words ──────────────────────────────────────────────── */
-/* Each word fades in on its own --in delay, then retires (fades out) once the
-   connecting lines have drawn — before the K forms. The fade-out animates only
-   opacity, so the in-animation's forwards transform (centered vs edge) holds. */
-.word {
-  position: absolute;
-  top: 50%;
-  font-family: var(--font-mono);
-  font-size: clamp(0.75rem, 1.6vw, 0.95rem);
-  font-weight: 700;
-  letter-spacing: 0.32em;
+/* ── Stage 5–7 — the network resolves into a brain, then collapses inward ── */
+.brain {
+  transform-box: view-box;
+  transform-origin: 200px 200px;
+  animation: ld-collapse calc(0.7s * var(--sp)) cubic-bezier(0.6, 0, 0.3, 1) 4.6s forwards;
+}
+.brainOutline {
+  animation: ld-draw calc(0.8s * var(--sp)) ease var(--d, 2.3s) forwards;
+}
+.brainFold {
+  stroke-width: 1.3;
+  animation: ld-draw calc(0.5s * var(--sp)) ease var(--d, 2.8s) forwards;
+}
+.activity {
+  fill: none;
+  stroke: var(--ld-accent);
+  stroke-width: 1.4;
+  stroke-linecap: round;
+  stroke-dasharray: 0.18 0.82;
+  stroke-dashoffset: 1;
   opacity: 0;
-  transform: translateY(-50%);
+  filter: drop-shadow(0 0 4px rgba(215, 255, 63, 0.5));
   animation:
-    ld-word-in calc(0.8s * var(--sp)) cubic-bezier(0.16, 1, 0.3, 1) var(--in, 0s) forwards,
-    ld-fade-out calc(0.6s * var(--sp)) ease 2.9s forwards;
-}
-.wDesign {
-  left: 15%;
-  --in: 0.5s;
-  color: var(--ld-violet);
-  text-shadow: 0 0 14px var(--ld-violet-glow);
-}
-.wData {
-  left: 50%;
-  --in: 0.75s;
-  color: var(--ld-blue);
-  text-shadow: 0 0 14px var(--ld-blue-glow);
-  /* centered: use the center keyframes so the -50% X offset is preserved */
-  animation:
-    ld-word-in-center calc(0.8s * var(--sp)) cubic-bezier(0.16, 1, 0.3, 1) var(--in) forwards,
-    ld-fade-out calc(0.6s * var(--sp)) ease 2.9s forwards;
-}
-.wAi {
-  right: 15%;
-  --in: 1s;
-  color: #ffffff;
-  text-shadow: 0 0 14px rgba(255, 255, 255, 0.5);
+    ld-fade-in calc(0.3s * var(--sp)) ease var(--d, 3.5s) forwards,
+    ld-flow calc(0.55s * var(--sp)) linear var(--d, 3.5s) 2;
 }
 
-/* ── Connecting lines ───────────────────────────────────── */
-.connect {
-  position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  opacity: 0;
+/* ── Stage 8 — short rays radiate outward, then fade with the collapse ───── */
+.ray {
+  stroke-width: 1.3;
   animation:
-    ld-fade-in calc(0.3s * var(--sp)) ease 1.7s forwards,
-    ld-fade-out calc(0.5s * var(--sp)) ease 3.3s forwards;
+    ld-draw calc(0.4s * var(--sp)) ease var(--d, 3.9s) forwards,
+    ld-fade-out calc(0.45s * var(--sp)) ease 4.7s forwards;
 }
-.connLine {
-  stroke-dasharray: 700;
-  stroke-dashoffset: 700;
-  animation: ld-draw-line calc(1.2s * var(--sp)) ease 1.7s forwards;
-}
-.connLine:nth-child(2) { animation-delay: 1.82s; }
-.connLine:nth-child(3) { animation-delay: 1.94s; }
-.connLine:nth-child(4) { animation-delay: 2.06s; }
-.connLine:nth-child(5) { animation-delay: 2.18s; }
 
 /* ─── Formation lockup (K + glow + brand) — morphs to the logo on exit ───── */
 .lockup {
@@ -173,13 +179,13 @@
   filter: drop-shadow(0 0 6px rgba(215, 255, 63, 0.35));
   animation: ld-draw calc(0.42s * var(--sp)) cubic-bezier(0.6, 0, 0.3, 1) forwards;
 }
-.kStroke:nth-child(1) { animation-delay: 3.5s; }
-.kStroke:nth-child(2) { animation-delay: 3.8s; }
-.kStroke:nth-child(3) { animation-delay: 4.1s; }
+.kStroke:nth-child(1) { animation-delay: 5s; }
+.kStroke:nth-child(2) { animation-delay: 5.3s; }
+.kStroke:nth-child(3) { animation-delay: 5.6s; }
 .kJoint {
   fill: var(--ld-accent);
   opacity: 0;
-  animation: ld-fade-in calc(0.3s * var(--sp)) ease 4.4s forwards;
+  animation: ld-fade-in calc(0.3s * var(--sp)) ease 5.9s forwards;
 }
 
 .glowDot {
@@ -189,7 +195,7 @@
   background: var(--ld-accent);
   box-shadow: 0 0 16px var(--ld-accent), 0 0 32px rgba(215, 255, 63, 0.4);
   opacity: 0;
-  animation: ld-fade-in calc(0.5s * var(--sp)) ease 4.2s forwards;
+  animation: ld-fade-in calc(0.5s * var(--sp)) ease 5.7s forwards;
 }
 
 .brandName {
@@ -201,7 +207,7 @@
   line-height: 1;
   color: var(--ld-white);
   opacity: 0;
-  animation: ld-fade-up calc(0.7s * var(--sp)) cubic-bezier(0.16, 1, 0.3, 1) 4.6s forwards;
+  animation: ld-fade-up calc(0.7s * var(--sp)) cubic-bezier(0.16, 1, 0.3, 1) 5.9s forwards;
 }
 .brandSub {
   font-family: var(--font-mono);
@@ -209,7 +215,7 @@
   letter-spacing: 0.26em;
   color: var(--ld-dim);
   opacity: 0;
-  animation: ld-fade-up calc(0.5s * var(--sp)) ease 4.95s forwards;
+  animation: ld-fade-up calc(0.5s * var(--sp)) ease 6.25s forwards;
 }
 
 /* ════════════════════════════════════════════════════════════════════════
@@ -266,19 +272,29 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
-@keyframes ld-word-in {
-  from { opacity: 0; transform: translateY(-50%) scale(0.96); }
-  to { opacity: 1; transform: translateY(-50%) scale(1); }
-}
-@keyframes ld-word-in-center {
-  from { opacity: 0; transform: translate(-50%, -50%) scale(0.96); }
-  to { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-}
-@keyframes ld-draw-line {
-  to { stroke-dashoffset: 0; }
-}
 @keyframes ld-draw {
   to { stroke-dashoffset: 0; }
+}
+/* Box unfolds: scales up + rotates away as it dissolves into the network. */
+@keyframes ld-box-out {
+  0% { opacity: 1; transform: scale(1) rotate(0deg); }
+  100% { opacity: 0; transform: scale(1.75) rotate(45deg); }
+}
+/* Node pop: overshoot in, then settle. */
+@keyframes ld-node-pop {
+  0% { opacity: 0; transform: scale(0); }
+  60% { opacity: 1; transform: scale(1.35); }
+  100% { opacity: 1; transform: scale(1); }
+}
+/* Signal flow: the dashed segment travels along the inner activity paths. */
+@keyframes ld-flow {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+/* Simplify: the brain condenses toward the core and fades as the K takes over. */
+@keyframes ld-collapse {
+  0% { opacity: 1; transform: scale(1); }
+  100% { opacity: 0; transform: scale(0.12); }
 }
 @keyframes ld-morph {
   0% { transform: translate(0, 0) scale(1); opacity: 1; }
@@ -295,9 +311,7 @@
 @media (max-width: 640px) {
   .loader { --sp: 0.9; }
   .grain { display: none; }
-  .wDesign { left: 8%; }
-  .wAi { right: 8%; }
-  .word { font-size: clamp(0.7rem, 3.4vw, 0.85rem); letter-spacing: 0.24em; }
+  .diagram { width: clamp(200px, 68vw, 300px); }
   .kmark { width: 68px; height: 86px; }
 }
 
